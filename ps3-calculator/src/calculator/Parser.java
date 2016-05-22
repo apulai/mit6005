@@ -132,11 +132,20 @@ class Parser {
 			retval=72*left.value+right.value;
 			retvaltype = ValueType.INCHES;
 		}
-		if( left.type == ValueType.SCALAR && right.type == ValueType.POINTS ) retvaltype = ValueType.POINTS;
 		
-		if( left.type == ValueType.INCHES && right.type == ValueType.POINTS ) retvaltype = ValueType.INCHES;
-		if( left.type == ValueType.POINTS && right.type == ValueType.INCHES ) retvaltype = ValueType.POINTS;
-
+		if( left.type == ValueType.SCALAR && right.type == ValueType.SCALAR ) retvaltype=ValueType.SCALAR;
+		if( left.type == ValueType.SCALAR && right.type == ValueType.POINTS ) retvaltype=ValueType.POINTS;
+		if( left.type == ValueType.SCALAR && right.type == ValueType.INCHES ) retvaltype=ValueType.INCHES;
+		
+		if( left.type == ValueType.POINTS && right.type == ValueType.SCALAR ) retvaltype=ValueType.POINTS;
+		if( left.type == ValueType.POINTS && right.type == ValueType.POINTS ) retvaltype=ValueType.POINTS;
+		if( left.type == ValueType.POINTS && right.type == ValueType.INCHES ) retvaltype=ValueType.POINTS;
+		
+		if( left.type == ValueType.INCHES && right.type == ValueType.SCALAR ) retvaltype=ValueType.INCHES;
+		if( left.type == ValueType.INCHES && right.type == ValueType.POINTS ) retvaltype=ValueType.INCHES;
+		if( left.type == ValueType.INCHES && right.type == ValueType.INCHES ) retvaltype=ValueType.INCHES;
+		
+		
 		v=new Value(retval, retvaltype );
 		return v;
 	}
@@ -154,9 +163,20 @@ class Parser {
 			retval=72*left.value-right.value;
 			retvaltype = ValueType.INCHES;
 		}
-		if( left.type == ValueType.SCALAR && right.type == ValueType.POINTS ) retvaltype = ValueType.POINTS;
 		
-		if( left.type == ValueType.INCHES && right.type == ValueType.POINTS ) retvaltype = ValueType.INCHES;
+		if( left.type == ValueType.SCALAR && right.type == ValueType.SCALAR ) retvaltype=ValueType.SCALAR;
+		if( left.type == ValueType.SCALAR && right.type == ValueType.POINTS ) retvaltype=ValueType.POINTS;
+		if( left.type == ValueType.SCALAR && right.type == ValueType.INCHES ) retvaltype=ValueType.INCHES;
+		
+		if( left.type == ValueType.POINTS && right.type == ValueType.SCALAR ) retvaltype=ValueType.POINTS;
+		if( left.type == ValueType.POINTS && right.type == ValueType.POINTS ) retvaltype=ValueType.POINTS;
+		if( left.type == ValueType.POINTS && right.type == ValueType.INCHES ) retvaltype=ValueType.POINTS;
+		
+		if( left.type == ValueType.INCHES && right.type == ValueType.SCALAR ) retvaltype=ValueType.INCHES;
+		if( left.type == ValueType.INCHES && right.type == ValueType.POINTS ) retvaltype=ValueType.INCHES;
+		if( left.type == ValueType.INCHES && right.type == ValueType.INCHES ) retvaltype=ValueType.INCHES;
+			
+		//if( left.type == ValueType.INCHES && right.type == ValueType.POINTS ) retvaltype = ValueType.INCHES;
 		//if( left.type == ValueType.POINTS && right.type == ValueType.INCHES ) retvaltype = ValueType.POINTS;
 		
 
@@ -172,11 +192,19 @@ class Parser {
 
 		retvaltype=left.type;
 		retval=0;
-		if( left.type == ValueType.INCHES && right.type == ValueType.SCALAR ) retvaltype = ValueType.INCHES;
-		if( left.type == ValueType.INCHES && right.type == ValueType.INCHES ) retvaltype = ValueType.SCALAR;
-		if( left.type == ValueType.INCHES && right.type == ValueType.POINTS ) retvaltype = ValueType.SCALAR;
-		if( left.type == ValueType.SCALAR && right.type == ValueType.INCHES ) retvaltype = ValueType.INCHES;
-
+		
+		if( left.type == ValueType.SCALAR && right.type == ValueType.SCALAR ) retvaltype=ValueType.SCALAR;
+		if( left.type == ValueType.SCALAR && right.type == ValueType.POINTS ) retvaltype=ValueType.POINTS;
+		if( left.type == ValueType.SCALAR && right.type == ValueType.INCHES ) retvaltype=ValueType.INCHES;
+		
+		if( left.type == ValueType.POINTS && right.type == ValueType.SCALAR ) retvaltype=ValueType.POINTS;
+		if( left.type == ValueType.POINTS && right.type == ValueType.POINTS ) retvaltype=ValueType.SCALAR;
+		if( left.type == ValueType.POINTS && right.type == ValueType.INCHES ) retvaltype=ValueType.SCALAR;
+		
+		if( left.type == ValueType.INCHES && right.type == ValueType.SCALAR ) retvaltype=ValueType.INCHES;
+		if( left.type == ValueType.INCHES && right.type == ValueType.POINTS ) retvaltype=ValueType.SCALAR;
+		if( left.type == ValueType.INCHES && right.type == ValueType.INCHES ) retvaltype=ValueType.SCALAR;
+		
 		if( right.value !=0 ) retval=left.value/right.value;
 
 		retvaltype=left.type;
@@ -192,11 +220,19 @@ class Parser {
 
 		retvaltype=left.type;
 
-		if( left.type == ValueType.INCHES && right.type == ValueType.SCALAR ) retvaltype = ValueType.INCHES;
-		if( left.type == ValueType.INCHES && right.type == ValueType.INCHES ) retvaltype = ValueType.INCHES;
-		//if( left.type == ValueType.INCHES && right.type == ValueType.POINTS ) retvaltype = ValueType.SCALAR;
-		//if( left.type == ValueType.SCALAR && right.type == ValueType.INCHES ) retvaltype = ValueType.SCALAR;
-
+		if( left.type == ValueType.SCALAR && right.type == ValueType.SCALAR ) retvaltype=ValueType.SCALAR;
+		if( left.type == ValueType.SCALAR && right.type == ValueType.POINTS ) retvaltype=ValueType.POINTS;
+		if( left.type == ValueType.SCALAR && right.type == ValueType.INCHES ) retvaltype=ValueType.INCHES;
+		
+		if( left.type == ValueType.POINTS && right.type == ValueType.SCALAR ) retvaltype=ValueType.POINTS;
+		if( left.type == ValueType.POINTS && right.type == ValueType.POINTS ) retvaltype=ValueType.POINTS;
+		if( left.type == ValueType.POINTS && right.type == ValueType.INCHES ) retvaltype=ValueType.INCHES;
+		
+		if( left.type == ValueType.INCHES && right.type == ValueType.SCALAR ) retvaltype=ValueType.INCHES;
+		if( left.type == ValueType.INCHES && right.type == ValueType.POINTS ) retvaltype=ValueType.INCHES;
+		if( left.type == ValueType.INCHES && right.type == ValueType.INCHES ) retvaltype=ValueType.INCHES;
+		
+		
 		retval=left.value*right.value;
 
 		retvaltype=left.type;
