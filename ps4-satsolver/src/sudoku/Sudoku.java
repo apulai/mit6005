@@ -6,9 +6,17 @@
  */
 package sudoku;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import sat.env.Environment;
 import sat.env.Variable;
@@ -19,6 +27,13 @@ import sat.formula.Formula;
  * Each object is a partially completed Sudoku puzzle.
  */
 public class Sudoku {
+	// Rep invariant:
+    //      each number must be smaller than dim*dim (in practice less than 10)
+	//		each number can be present in each row only once
+	//		each number can be present in each column only once
+	//		each number can be present only once in every "subsquar" (not checked yet)
+    //
+	
 	// dimension: standard puzzle has dim 3
 	private final int dim;
 	// number of rows and columns: standard puzzle has size 9
@@ -44,12 +59,12 @@ public class Sudoku {
 
 		int i,j,val,maxval;
 
-		System.out.println("Sudoku: CheckRep: Test1 running...");
+		//System.out.println("Sudoku: CheckRep: Test1 running...");
 		maxval=dim*dim;
 
-		for(i=0;i<dim;i++)
+		for(i=0;i<this.size;i++)
 		{
-			for(j=0;j<dim;j++)
+			for(j=0;j<this.size;j++)
 			{
 				val=square[i][j];
 				if( val < -1 || val > maxval) throw new RuntimeException("CheckRep: Test1: Hibas ertek !");
@@ -58,59 +73,68 @@ public class Sudoku {
 
 
 		// minden sorban 1 szam csak 1szer szerepelhet
-		System.out.println("Sudoku: CheckRep: Test2 running...");
-		for(i=0;i<dim;i++)
+		//System.out.println("Sudoku: CheckRep: Test2 running...");
+		for(i=0;i<this.size;i++)
 		{
 			ArrayList <Integer> szamok;
 
 			szamok=new ArrayList();
 
-			for(j=0;j<dim;j++)
+			for(j=0;j<this.size;j++)
 			{		
 				val=square[i][j];
+				//System.out.println(val+": "+szamok.indexOf(val));
+				//System.out.print(val+",");
 				if( val != -1)
 				{
-					if( szamok.indexOf(val) != -1 )
+					if( szamok.indexOf(val) == -1 )
 					{
 						// Nincs benne, hozzaadjuk
+						
 						szamok.add(val);
 					}
 					else
 					{
+						if(szamok.indexOf(val)>=0 )
 						throw new RuntimeException("CheckRep: Test2: Egy sorban tobbszor van ua az ertek !");
 					}	
 				}
 			}
+		//System.out.println("");
 		}
+		
 
 		// minden oszlopban 1 szam csak 1szer szerepelhet
-		System.out.println("Sudoku: CheckRep: Test3 running...");
-		for(j=0;j<dim;j++)
+		//System.out.println("Sudoku: CheckRep: Test3 running...");
+		for(j=0;j<this.size;j++)
 		{
 			ArrayList <Integer> szamok;
 
 			szamok=new ArrayList();
 
-			for(i=0;i<dim;i++)
+			for(i=0;i<this.size;i++)
 			{		
 				val=square[i][j];
+				//System.out.println(val+": "+szamok.indexOf(val));
 				if( val != -1)
 				{
-					if( szamok.indexOf(val) != -1 )
+					if( szamok.indexOf(val) == -1 )
 					{
 						// Nincs benne, hozzaadjuk
 						szamok.add(val);
 					}
 					else
 					{
+						if(szamok.indexOf(val)>=0 )
 						throw new RuntimeException("CheckRep: Test3: Egy oszlopban tobbszor van ua az ertek !");
 					}	
 				}
 			}
 		}
-		System.out.println("Sudoku: CheckRep: completed...");
+		//System.out.println("Sudoku: CheckRep: completed...");
 	}
-
+	
+	
 	/**
 	 * create an empty Sudoku puzzle of dimension dim.
 	 * 
@@ -120,14 +144,14 @@ public class Sudoku {
 	 */
 	public Sudoku(int dim) {
 		// TODO: implement this.
-		int i,j,val,maxval;
+		int i,j;
 
 		this.dim=dim;
-		this.occupies=new Variable[dim][dim][dim];
 		this.size=dim*dim;
+		this.occupies=new Variable[this.size][this.size][this.size];
 		this.square=new int[this.size][this.size];
 		
-		maxval=dim*dim;
+		
 		for(i=0;i<this.size;i++)
 		{
 			for(j=0;j<this.size;j++)
@@ -136,6 +160,7 @@ public class Sudoku {
 			}
 		}
 		this.checkRep();
+		//System.out.println(this.toString());
 	}
 
 	/**
@@ -164,9 +189,8 @@ public class Sudoku {
 		int i,j,val;
 
 		this.dim=dim;
-		
-		this.occupies=new Variable[dim][dim][dim];
-		this.size=dim*dim;
+		this.size=dim*dim;	
+		this.occupies=new Variable[this.size][this.size][this.size];
 		this.square=new int[this.size][this.size];
 
 		for(i=0;i<this.size;i++)
@@ -177,6 +201,7 @@ public class Sudoku {
 			}
 		}
 		this.checkRep();
+		//System.out.println(this.toString());
 	}
 
 
@@ -200,8 +225,58 @@ public class Sudoku {
 	 */
 	public static Sudoku fromFile(int dim, String filename) throws IOException,
 	ParseException {
-		// TODO: implement this.
-		throw new RuntimeException("not yet implemented.");
+		Sudoku s;
+		int i,j,size;
+		File f;
+		FileInputStream in;
+		InputStreamReader reader;
+		Charset encoding;
+		
+		s=new Sudoku(dim);
+		f=new File(filename);
+
+		size=dim*dim;
+		encoding = Charset.defaultCharset();
+		File file = new File(filename);
+		 
+		{
+			in = new FileInputStream(file);
+			reader = new InputStreamReader(in, encoding);
+			// buffer for efficiency
+			Reader buffer = new BufferedReader(reader);
+			int r=0;
+			i=0;
+			j=0;
+					while ((r = reader.read()) != -1) 
+					{
+						char ch = (char) r;
+						//System.out.println("Do something with " + ch);
+
+						
+						switch( ch )
+						{
+						case '\n':
+						case '\r':
+							continue;
+						case '.':
+							s.square[i][j]=-1;
+							j++;
+							if(j==size) { j=0; i++; } 
+							break;
+						default:
+							s.square[i][j]=new Integer(ch-'0')-1;
+							j++;
+							if(j==size) { j=0; i++; }
+							break;
+						}
+
+					}
+				}
+		 
+
+		//System.out.println(s.toString());
+		s.checkRep();
+		return s;
 	}
 
 	/**
@@ -225,8 +300,30 @@ public class Sudoku {
 	 * @return a string corresponding to this grid
 	 */
 	public String toString() {
-		// TODO: implement this.
-		throw new RuntimeException("not yet implemented.");
+
+		StringBuilder sb;
+		int i,j,val;
+
+		sb=new StringBuilder(this.size*this.size);
+
+		for(i=0;i<this.size;i++)
+		{
+			for(j=0;j<this.size;j++)
+			{
+				if( square[i][j]==-1 )
+				{
+					// empty
+					sb=sb.append('.');
+				}
+				else
+				{
+					sb=sb.append(square[i][j]+1);
+				}
+				
+			}
+		sb=sb.append(System.lineSeparator());
+		}
+		return sb.toString();
 	}
 
 	/**

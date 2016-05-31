@@ -13,14 +13,14 @@ public class Main {
     /*
      * Uncomment line(s) below to test your implementation! 
      */
-    public static void main (String[] args) {
+    public static void main (String[] args) throws IOException, ParseException {
 //        timedSolve (new Sudoku(2));
-        timedSolve (new Sudoku(2, new int[][] { 
-                    new int[] { 0, 1, 0, 4 }, 
-                    new int[] { 0, 0, 0, 0 }, 
-                    new int[] { 2, 0, 3, 0 }, 
-                    new int[] { 0, 0, 0, 0 }, 
-        }));
+//        timedSolve (new Sudoku(2, new int[][] { 
+//                    new int[] { 0, 1, 3, 4 }, 
+//                    new int[] { 0, 0, 0, 0 }, 
+//                    new int[] { 2, 0, 3, 0 }, 
+//                    new int[] { 0, 0, 0, 0 }, 
+//        }));
 //        timedSolveFromFile(3, "samples/sudoku_easy.txt");
 //        timedSolveFromFile(3, "samples/sudoku_hard.txt");        
     }

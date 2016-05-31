@@ -6,7 +6,9 @@
  */
 package sat.formula;
 
+import immutable.EmptyImList;
 import immutable.ImList;
+import immutable.NonEmptyImList;
 
 import java.util.Iterator;
 
@@ -17,6 +19,12 @@ import sat.env.Variable;
  * conjunctive normal form, intended to be solved by a
  * SAT solver.
  */
+
+//Formula = ImList<Clause> // a list of clauses ANDed together
+//Clause = ImList<Literal> // a list of literals ORed together
+//Literal = Positive(v: Var) + Negative(v:Var) // either a variable P or its negation ¬P
+//Var = String
+
 public class Formula {
     private final ImList<Clause> clauses;
     // Rep invariant:
@@ -45,10 +53,10 @@ public class Formula {
      * 
      * @return the true problem
      */
-    public Formula() {
-
+    public Formula() {	
         // TODO: implement this.
-        throw new RuntimeException("not yet implemented.");
+    	// throw new RuntimeException("not yet implemented.");
+    	clauses=new EmptyImList<Clause>();
     }
 
     /**
@@ -57,9 +65,12 @@ public class Formula {
      * 
      * @return the problem with a single clause containing the literal l
      */
-    public Formula(Variable l) {
+    public Formula(Variable var) {
         // TODO: implement this.
-        throw new RuntimeException("not yet implemented.");
+    	//throw new RuntimeException("not yet implemented.");
+    	Clause c;
+    	c=new Clause(PosLiteral.make(var));	
+    	clauses=new NonEmptyImList<Clause>(c);
     }
 
     /**
@@ -69,7 +80,8 @@ public class Formula {
      */
     public Formula(Clause c) {
         // TODO: implement this.
-        throw new RuntimeException("not yet implemented.");
+        //throw new RuntimeException("not yet implemented.");
+    	clauses=new NonEmptyImList<Clause>(c);     
     }
 
     /**
@@ -77,9 +89,26 @@ public class Formula {
      * 
      * @return a new problem with the clauses of this, but c added
      */
+    // I have created here a "hidden" private constructor
+    // since the only way to modify a final field is in the
+    // constructor. The idea came from the NonEmptyImList
+    // file
+    // we are saving space, since the "rest" or "tail" of the IM list
+    // is the previous IM list
+    private Formula (Clause c, ImList<Clause> r) {
+        //System.out.println("Test1"+r.toString());
+        //System.out.println("Test1"+c);
+        clauses=r.add(c);
+        //System.out.println("Test2"+clauses.toString());
+        checkRep();
+    }
+    
     public Formula addClause(Clause c) {
         // TODO: implement this.
-        throw new RuntimeException("not yet implemented.");
+    	// throw new RuntimeException("not yet implemented.");
+    	Formula f2;
+    	f2=new Formula(c,this.clauses);
+    	return f2;
     }
 
     /**
@@ -89,7 +118,8 @@ public class Formula {
      */
     public ImList<Clause> getClauses() {
         // TODO: implement this.
-        throw new RuntimeException("not yet implemented.");
+        //throw new RuntimeException("not yet implemented.");
+    	return clauses;
     }
 
     /**
@@ -100,7 +130,9 @@ public class Formula {
      */
     public Iterator<Clause> iterator() {
         // TODO: implement this.
-        throw new RuntimeException("not yet implemented.");
+        //throw new RuntimeException("not yet implemented.");
+        //
+    	return clauses.iterator();
     }
 
     /**
@@ -125,7 +157,7 @@ public class Formula {
     /**
      * @return a new problem corresponding to the negation of this
      */
-    public Formula not() {
+    public Formula not(Formula p) {
         // TODO: implement this.
         // Hint: you'll need to apply DeMorgan's Laws (http://en.wikipedia.org/wiki/De_Morgan's_laws)
         // to move the negation down to the literals, and the distributive law to preserve 
@@ -143,7 +175,8 @@ public class Formula {
      */
     public int getSize() {
         // TODO: implement this.
-        throw new RuntimeException("not yet implemented.");
+        //throw new RuntimeException("not yet implemented.");
+        return clauses.size();
     }
 
     /**
