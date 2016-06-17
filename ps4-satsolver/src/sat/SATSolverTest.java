@@ -4,7 +4,9 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import sat.env.Environment;
 import sat.formula.Clause;
+import sat.formula.Formula;
 import sat.formula.Literal;
 import sat.formula.PosLiteral;
 
@@ -26,5 +28,52 @@ public class SATSolverTest {
 
     // TODO: put your test cases here
 
+    
+    @Test
+    public void t1()
+    {
+    	Formula f1,f2,f3;
+    	Environment retenv;
+    	Clause clause1,clause2,clause3;
+    	clause1 = make (a);
+
+    	f1=new Formula(clause1);
+    	
+    	retenv=SATSolver.solve(f1);
+    	
+    	assertTrue(Boolean.TRUE);
+    } 
+    
+    @Test
+    public void t2()
+    {
+    	Formula f1,f2,f3;
+    	Environment retenv;
+    	Clause clause1,clause2,clause3;
+    	clause1 = make (a);
+    	clause2 = make (a,b);
+    	clause3 = make (a,b,c);
+    	
+    	f1=new Formula(clause1);
+    	f2=f1.addClause(clause2);
+    	f3=f2.addClause(clause3);
+    	
+    	retenv=SATSolver.solve(f3);
+    	
+    	assertTrue(Boolean.TRUE);
+    }   
+    
+    // Helper function for constructing a clause.  Takes
+    // a variable number of arguments, e.g.
+    //  clause(a, b, c) will make the clause (a or b or c)
+    // @param e,...   literals in the clause
+    // @return clause containing e,...
+    private Clause make(Literal... e) {
+        Clause c = new Clause();
+        for (int i = 0; i < e.length; ++i) {
+            c = c.add(e[i]);
+        }
+        return c;
+    }
     
 }
