@@ -14,10 +14,20 @@ public class SATSolverTest {
     Literal a = PosLiteral.make("a");
     Literal b = PosLiteral.make("b");
     Literal c = PosLiteral.make("c");
+    Literal d = PosLiteral.make("d");
     Literal na = a.getNegation();
     Literal nb = b.getNegation();
     Literal nc = c.getNegation();
+    Literal nd = d.getNegation();
 
+    Literal s = PosLiteral.make("socrates");
+    Literal h = PosLiteral.make("human");
+    Literal m = PosLiteral.make("mortal");
+    Literal ns = s.getNegation();
+    Literal nh = h.getNegation();
+    Literal nm = m.getNegation();
+    
+    
     // make sure assertions are turned on!  
     // we don't want to run test cases without assertions too.
     // see the handout to find out how to turn them on.
@@ -35,11 +45,12 @@ public class SATSolverTest {
     	Formula f1,f2,f3;
     	Environment retenv;
     	Clause clause1,clause2,clause3;
-    	clause1 = make (a);
+    	clause1 = make (na);
 
     	f1=new Formula(clause1);
     	
     	retenv=SATSolver.solve(f1);
+    	System.out.println("Main: "+retenv);
     	
     	assertTrue(Boolean.TRUE);
     } 
@@ -59,6 +70,120 @@ public class SATSolverTest {
     	f3=f2.addClause(clause3);
     	
     	retenv=SATSolver.solve(f3);
+    	System.out.println("Main: "+retenv);
+    	
+    	assertTrue(Boolean.TRUE);
+    }   
+    
+    
+    @Test
+    public void t3()
+    {
+    	Formula f1,f2,f3;
+    	Environment retenv;
+    	Clause clause1,clause2,clause3;
+    	clause1 = make (a);
+    	clause2 = make (na,b);
+    	
+    	f1=new Formula(clause1);
+    	f2=f1.addClause(clause2);
+    	
+    	retenv=SATSolver.solve(f2);
+    	System.out.println("Main: "+retenv);
+    	
+    	assertTrue(Boolean.TRUE);
+    }   
+  
+    @Test
+    public void t4()
+    {
+    	Formula f1,f2,f3;
+    	Environment retenv;
+    	Clause clause1,clause2,clause3;
+    	clause1 = make (a);
+    	clause2 = make (na,nb);
+    	
+    	f1=new Formula(clause1);
+    	f2=f1.addClause(clause2);
+    	
+    	retenv=SATSolver.solve(f2);
+    	System.out.println("Main: "+retenv);
+    	
+    	assertTrue(Boolean.TRUE);
+    }   
+  
+    @Test
+    public void t5()
+    {
+    	Formula f1,f2,f3;
+    	Environment retenv;
+    	Clause clause1,clause2,clause3;
+    	clause1 = make (a);
+    	clause2 = make (na);
+    	
+    	f1=new Formula(clause1);
+    	f2=f1.addClause(clause2);
+    	
+    	retenv=SATSolver.solve(f2);
+    	System.out.println("Main: "+retenv);
+    	
+    	assertTrue(Boolean.TRUE);
+    }   
+  
+    @Test
+    public void t6()
+    {
+    	Formula f1,f2,f3;
+    	Environment retenv;
+    	Clause clause1,clause2,clause3;
+    	clause1 = make (a,b);
+    	clause2 = make (b,c);
+    	
+    	f1=new Formula(clause1);
+    	f2=f1.addClause(clause2);
+    	
+    	retenv=SATSolver.solve(f2);
+    	System.out.println("Main: "+retenv);
+    	
+    	assertTrue(Boolean.TRUE);
+    }   
+  
+
+    @Test
+    public void t7()
+    {
+    	Formula f1,f2,f3;
+    	Environment retenv;
+    	Clause clause1,clause2,clause3;
+    	clause1 = make (a,b);
+    	clause2 = make (c,d);
+    	
+    	f1=new Formula(clause1);
+    	f2=f1.addClause(clause2);
+    	
+    	retenv=SATSolver.solve(f2);
+    	System.out.println("Main: "+retenv);
+    	
+    	assertTrue(Boolean.TRUE);
+    }   
+  
+    @Test
+    public void tsocrates()
+    {
+    	Formula f1,f2,f3;
+    	Environment retenv;
+    	Clause clause1,clause2,clause3,clause4;
+    	clause1 = make (ns,h);
+    	clause2 = make (nh,m);
+    	clause3 = make (s);
+    	clause4 = make (nm);
+    	
+    	
+    	f1=new Formula(clause1);
+    	f1=f1.addClause(clause2).addClause(clause3).addClause(clause4);
+    	
+    	retenv=SATSolver.solve(f1);
+    	System.out.println("Main: "+retenv);
     	
     	assertTrue(Boolean.TRUE);
     }   
