@@ -42,15 +42,16 @@ public class SATSolverTest {
     @Test
     public void t1()
     {
-    	Formula f1,f2,f3;
+    	Formula f1;
     	Environment retenv;
     	Clause clause1,clause2,clause3;
     	clause1 = make (na);
 
     	f1=new Formula(clause1);
-    	
+    	System.out.println("---");
+    	System.out.println(f1);
     	retenv=SATSolver.solve(f1);
-    	System.out.println("Main: "+retenv);
+    	System.out.println("Solution: "+retenv);
     	
     	assertTrue(Boolean.TRUE);
     } 
@@ -58,19 +59,19 @@ public class SATSolverTest {
     @Test
     public void t2()
     {
-    	Formula f1,f2,f3;
+    	Formula f1;
     	Environment retenv;
     	Clause clause1,clause2,clause3;
     	clause1 = make (a);
     	clause2 = make (a,b);
     	clause3 = make (a,b,c);
     	
-    	f1=new Formula(clause1);
-    	f2=f1.addClause(clause2);
-    	f3=f2.addClause(clause3);
+    	f1=new Formula(clause1).addClause(clause2).addClause(clause3);
     	
-    	retenv=SATSolver.solve(f3);
-    	System.out.println("Main: "+retenv);
+    	System.out.println("---");
+    	System.out.println(f1);
+    	retenv=SATSolver.solve(f1);
+    	System.out.println("Solution: "+retenv);
     	
     	assertTrue(Boolean.TRUE);
     }   
@@ -85,11 +86,12 @@ public class SATSolverTest {
     	clause1 = make (a);
     	clause2 = make (na,b);
     	
-    	f1=new Formula(clause1);
-    	f2=f1.addClause(clause2);
+    	f1=new Formula(clause1).addClause(clause2);
     	
-    	retenv=SATSolver.solve(f2);
-    	System.out.println("Main: "+retenv);
+    	System.out.println("---");
+    	System.out.println(f1);
+    	retenv=SATSolver.solve(f1);
+    	System.out.println("Solution: "+retenv);
     	
     	assertTrue(Boolean.TRUE);
     }   
@@ -97,17 +99,19 @@ public class SATSolverTest {
     @Test
     public void t4()
     {
-    	Formula f1,f2,f3;
+    	Formula f1;
     	Environment retenv;
     	Clause clause1,clause2,clause3;
     	clause1 = make (a);
     	clause2 = make (na,nb);
     	
-    	f1=new Formula(clause1);
-    	f2=f1.addClause(clause2);
+    	f1=new Formula(clause1).addClause(clause2);
     	
-    	retenv=SATSolver.solve(f2);
-    	System.out.println("Main: "+retenv);
+    	System.out.println("---");
+    	System.out.println(f1);
+    	retenv=SATSolver.solve(f1);
+    	System.out.println("Solution: "+retenv);
+    	
     	
     	assertTrue(Boolean.TRUE);
     }   
@@ -121,11 +125,13 @@ public class SATSolverTest {
     	clause1 = make (a);
     	clause2 = make (na);
     	
-    	f1=new Formula(clause1);
-    	f2=f1.addClause(clause2);
+    	f1=new Formula(clause1).addClause(clause2);
     	
-    	retenv=SATSolver.solve(f2);
-    	System.out.println("Main: "+retenv);
+    	System.out.println("---");
+    	System.out.println(f1);
+    	retenv=SATSolver.solve(f1);
+    	System.out.println("Solution: "+retenv);
+    	
     	
     	assertTrue(Boolean.TRUE);
     }   
@@ -137,13 +143,14 @@ public class SATSolverTest {
     	Environment retenv;
     	Clause clause1,clause2,clause3;
     	clause1 = make (a,b);
-    	clause2 = make (b,c);
+    	clause2 = make (c,b);
     	
-    	f1=new Formula(clause1);
-    	f2=f1.addClause(clause2);
+    	f1=new Formula(clause1).addClause(clause2);
     	
-    	retenv=SATSolver.solve(f2);
-    	System.out.println("Main: "+retenv);
+    	System.out.println("---");
+    	System.out.println(f1);
+    	retenv=SATSolver.solve(f1);
+    	System.out.println("Solution: "+retenv);
     	
     	assertTrue(Boolean.TRUE);
     }   
@@ -158,15 +165,39 @@ public class SATSolverTest {
     	clause1 = make (a,b);
     	clause2 = make (c,d);
     	
-    	f1=new Formula(clause1);
-    	f2=f1.addClause(clause2);
+    	f1=new Formula(clause1).addClause(clause2);
     	
-    	retenv=SATSolver.solve(f2);
-    	System.out.println("Main: "+retenv);
+    	System.out.println("---");
+    	System.out.println(f1);
+    	retenv=SATSolver.solve(f1);
+    	System.out.println("Solution: "+retenv);
+    	
     	
     	assertTrue(Boolean.TRUE);
     }   
   
+    @Test
+    public void t8()
+    {
+    	Formula f1,f2,f3;
+    	Environment retenv;
+    	Clause clause1,clause2,clause3;
+    	clause1 = make (a,b);
+    	clause2 = make (c,na);
+    	clause3 = make (d,nc);
+    	f1=new Formula(clause1).addClause(clause2).addClause(clause3);
+    	
+    	System.out.println("---");
+    	System.out.println(f1);
+    	retenv=SATSolver.solve(f1);
+    	System.out.println("Solution: "+retenv);
+    	
+    	
+    	assertTrue(Boolean.TRUE);
+    } 
+    
+    
+    
     @Test
     public void tsocrates()
     {
@@ -182,8 +213,10 @@ public class SATSolverTest {
     	f1=new Formula(clause1);
     	f1=f1.addClause(clause2).addClause(clause3).addClause(clause4);
     	
+    	System.out.println("---");
+    	System.out.println(f1);
     	retenv=SATSolver.solve(f1);
-    	System.out.println("Main: "+retenv);
+    	System.out.println("Solution: "+retenv);
     	
     	assertTrue(Boolean.TRUE);
     }   

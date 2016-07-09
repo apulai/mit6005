@@ -31,7 +31,7 @@ public class SATSolver {
 
 		Environment retenv;
 
-		System.out.println("----");
+
 		retenv=new Environment();
 		retenv=solve(formula.getClauses(), retenv); 
 
@@ -56,28 +56,38 @@ public class SATSolver {
 		//throw new RuntimeException("not yet implemented.");
 
 		Environment retenv;
-		retenv = new Environment();
 		Clause smallestcl;
 		int minsize=-1;
+		int debug=0;
+
+		retenv = new Environment();
 
 		//If there are no clauses, the formula is trivially satisfiable
 		// ha nincsenek cluase-ák, akkor a lista nulla elemû
-		// visszaadjuk amit kaptunk
+		// Minden clausát sikerült igazzá tenni.
+		// Megoldottuk a problámat
+		// visszaadjuk azt az env-et amit kaptunk
 
-		System.out.println("solve start:" + clauses + " env: "+env);
+		if( debug > 0) System.out.println("solve start:" + clauses + " env: "+env);
 
 		if( clauses.size() == 0 )
 		{
-			System.out.println("solve No clauses: trivially true");
+			//if( debug > 0) 
+			System.out.println("solve No clauses: trivially TURE: "+env);
 			return env;
 		}
 		//If there is an empty clause, the clause list is unsatisfiable -- fail and backtrack  
 		// Végimászunk az összes clause-án és ha valamelyik üres null-t adunk vissza.
+		// Ez akkor fordult elõ, ha az adott clause nem lett feltétlenül igaz attól, hogy
+		// egy változót egy másik klauzában igazzá tettünk.
+
 		for( Clause cl: clauses )
 		{
-			if( cl.size() == 0)
+			//if( cl.size() == 0)
+			if( cl.isEmpty() )
 			{
-				System.out.println("solve empty clause: FAIL! "+cl);
+				//if( debug > 0) 
+				System.out.println("solve empty clause: FALSE: "+env);
 				return null;
 			}      	
 		}
@@ -87,41 +97,53 @@ public class SATSolver {
 		//clause is satisfied, substitute for the variable in all the other clauses (using the
 		//suggested substitute() method), and recursively call solve().
 
+		// Ezt csak azért csináljuk, hogy inicializálva legyen
 		smallestcl= clauses.first();
+
+		// Akkor most keressük meg a legkisebbet
 		for( Clause cl1: clauses )
 		{
 			if(minsize==-1) minsize=cl1.size();
 			if(minsize >= cl1.size() ) 
-				{
+			{
 				smallestcl=cl1;
 				minsize=cl1.size();
-				}
+			}
 		}
-		System.out.println("Smallestcl: "+smallestcl);
-		
+		if( debug > 0) System.out.println("Smallestcl: "+smallestcl);
+
 		if( smallestcl.size() == 1)
 		{
 			// Nagyszeru, van 1 elemu clausa!
-			// Most akkor végig kell menni mindegyiken és szépen helyettesíteni
-			// ez most azt jelenti, hogy ki kell venni belõle akár negálva, akár normálban van ott
-			// majd rekurzívan ráhívni a solve-ra
+			// Most akkor végig kell menni mindegyiken és kitörölni
+			// azokat a clausákat amiket igazzá tudunk tenni
+			// Amiben a választott érték negáltja szerepel, abbõl kivesszük
+			// magát a változót, de a clausát bent kell hagyni, mert nem tudutuk
+			// igazzá tenni
+			// Szóval ha módosítottuk a clasue-listát
+			// rekurzívan ráhívunk a solve-ra
 
-			//Ez vissza ad egy tetszoleges literalt
-			//Mivel egy van benne, ezért jó lesz
 			Literal l1;
 			Bool b1;
 			ImList<Clause> clauses2;
 
-			b1=Bool.TRUE;
+
+			//Ez vissza ad egy tetszoleges literalt
+			//Mivel egy van benne, ezért jó lesz
 			l1=smallestcl.chooseLiteral();
-			// errol mondtak h nem kene
+
+			b1=Bool.TRUE;
+			// errol mondták hogy nem szép
+			// de nincs más öteletem
 			if ( l1 instanceof NegLiteral)  
 			{
 				b1=Bool.FALSE;      			
 			}
+			// Ezzel most igazzá tettük ezt a klauzát
 			env=env.put(l1.getVariable(), b1);
 			clauses2=substitute( clauses, l1);
 			retenv=solve(clauses2,env);
+			return retenv;
 		}      	
 		else
 		{
@@ -130,165 +152,117 @@ public class SATSolver {
 			//solve() recursively.
 			//- If that fails, then try setting the literal to FALSE, substitute, and solve()
 			// recursively.
-
 			//System.out.println("nem egyelemu: "+smallestcl);
-			Literal l1;
+
 			Bool b1;
 			ImList<Clause> clauses2;
 
-			b1=Bool.TRUE;
-			l1=smallestcl.chooseLiteral();
-			// errol mondtak h nem kene
-			if ( l1 instanceof NegLiteral)  
+			// Most ebben a klauzában minden betûn végigmegyünk
+			// Még akkor is ha van érvényes megoldásunk?
+
+			for(Literal l1: smallestcl)
 			{
-				b1=Bool.FALSE;      			
+				b1=Bool.TRUE;
+
+				// errol mondták hogy nem szép
+				// de nincs más öteletem
+				if ( l1 instanceof NegLiteral)  
+				{
+					b1=Bool.FALSE;      			
+				}
+				env=env.put(l1.getVariable(), b1);
+				clauses2=substitute( clauses, l1);
+				retenv=solve(clauses2,env);
+
+
+				if( retenv != null ) 
+				{	
+					if( debug > 0) System.out.println("solve return: "+retenv);
+					return retenv;
+				}
 			}
-			env=env.put(l1.getVariable(), b1);
-			clauses2=substitute( clauses, l1);
-			retenv=solve(clauses2,env);
-			}		
-	
-		if( retenv != null ) 
-		{	
-			System.out.println("solve return: "+retenv);
-			return retenv;
 		}
-		else return null;
-	
+
+		return null;
 	}
 
 
 
 
-/**
- * given a clause list and literal, produce a new list resulting from
- * setting that literal to true
- * 
- * @param clauses
- *            , a list of clauses
- * @param l
- *            , a literal to set to true
- * @return a new list of clauses resulting from setting l to true
- */
-	
-private static ImList<Clause> substitute(ImList<Clause> clauses,
-		Literal l) {
-	// TODO: implement this.
-	//throw new RuntimeException("not yet implemented.");
-	ImList<Clause> retcllist=new EmptyImList<Clause>();
+	/**
+	 * given a clause list and literal, produce a new list resulting from
+	 * setting that literal to true
+	 * 
+	 * @param clauses
+	 *            , a list of clauses
+	 * @param l
+	 *            , a literal to set to true
+	 * @return a new list of clauses resulting from setting l to true
+	 */
 
-	new EmptyImList<Clause>();
-
-	ArrayList<Clause> templist=new ArrayList<Clause>();
-	System.out.println("Substitue start: "+clauses+" literal: "+l);
-
-	for( Clause cl: clauses )
-	{
-		// Ha benne van, akkor csak megyunk tovabb
-		if( cl.contains(l) ) continue;
+	private static ImList<Clause> substitute(ImList<Clause> clauses,
+			Literal l) {
+		// TODO: implement this.
+		//throw new RuntimeException("not yet implemented.");
 		
-		// Ha a negáltja van benne, akkor ki kell mazsolázni belõle
-		if( cl.contains(l.getNegation()) )		
+		int debug=0;
+		
+		ImList<Clause> retcllist=new EmptyImList<Clause>();
+
+		new EmptyImList<Clause>();
+
+		ArrayList<Clause> templist=new ArrayList<Clause>();
+		if (debug > 0) System.out.println("Substitue start: "+clauses+" literal: "+l);
+
+		for( Clause cl: clauses )
 		{
-			Clause tempcl;
-			//System.out.println(" yes");
-			tempcl = new Clause();
-			for ( Literal l2 : cl)
+			// Ha benne van, akkor csak megyunk tovabb
+			if( cl.contains(l) ) continue;
+
+			// Ha a negáltja van benne, akkor ki kell mazsolázni belõle
+			if( cl.contains(l.getNegation()) )		
 			{
-				if(l2.getVariable().getName() != l.getVariable().getName() )
+				Clause tempcl;
+				tempcl = new Clause();
+				for ( Literal l2 : cl)
 				{
-					tempcl=tempcl.add(l2);
-					//System.out.println("Substitute tempcl hozzad1"+tempcl);
+					if(l2.getVariable().getName() != l.getVariable().getName() )
+					{
+						tempcl=tempcl.add(l2);
+						//System.out.println("Substitute tempcl hozzad1"+tempcl);
+					}
+
 				}
-
+				//if( tempcl.size() != 0  ) 
+				templist.add(tempcl);
 			}
-			//if( tempcl.size() != 0  ) 
-			templist.add(tempcl);
-		}
-		// se a negáltja sem maga nincs benne
-		else
-		{
-			// nincs benne, úgyhogy akkor csak hozzáadjuk.
-			//System.out.println(" no");
-			//System.out.println("Substitute tempcl hozzad2"+cl);
-			templist.add(cl);
-		}
-	}
-
-	if(templist.size()==0)
-	{
-		System.out.println("Substitue return: empty");
-		return new EmptyImList<Clause>();
-	}
-	else
-	{
-		for ( Clause tempcl: templist)
-		{
-			retcllist=retcllist.add(tempcl);
-		}
-		// átmásolni és visszatérni
-		System.out.println("Substitue return: "+templist);
-		return retcllist;
-	}
-
-}
-
-private static ImList<Clause> substituter(ImList<Clause> clauses,
-		Literal l) {
-	// TODO: implement this.
-	//throw new RuntimeException("not yet implemented.");
-	ImList<Clause> retcllist=new EmptyImList<Clause>();
-
-	new EmptyImList<Clause>();
-
-	ArrayList<Clause> templist=new ArrayList<Clause>();
-	//System.out.println("Substitue start:"+clauses+" literal"+l);
-
-	for( Clause cl: clauses )
-	{
-		// Ha ebben a klauzában benne van az a literal amit ki kell venni
-		//System.out.println("Substitue: benne van?: "+cl+l);
-		//if( cl.contains(l) || cl.contains(l.getNegation()))
-		if( cl.contains(l) )		
-		{
-			Clause tempcl;
-			//System.out.println(" yes");
-			tempcl = new Clause();
-			for ( Literal l2 : cl)
+			// se a negáltja sem maga nincs benne
+			else
 			{
-				if(l2.getVariable().getName() != l.getVariable().getName() )
-				{
-					tempcl=tempcl.add(l2);
-					//System.out.println("Substitute tempcl hozzad"+tempcl);
-				}
-
+				// nincs benne, úgyhogy akkor csak hozzáadjuk.
+				//System.out.println(" no");
+				//System.out.println("Substitute tempcl hozzad2"+cl);
+				templist.add(cl);
 			}
-			if( tempcl.size() != 0 && cl.contains(l.getNegation()) ) templist.add(tempcl);
+		}
+
+		if(templist.size()==0)
+		{
+			if (debug > 0)  System.out.println("Substitue return: empty");
+			return new EmptyImList<Clause>();
 		}
 		else
 		{
-			// nincs benne, úgyhogy akkor csak hozzáadjuk.
-			//System.out.println(" no");
-			templist.add(cl);
+			for ( Clause tempcl: templist)
+			{
+				retcllist=retcllist.add(tempcl);
+			}
+			// átmásolni és visszatérni
+			if (debug > 0)  System.out.println("Substitue return: "+templist);
+			return retcllist;
 		}
+
 	}
 
-	if(templist.size()==0)
-	{
-		//System.out.println("Substitue return: empty");
-		return new EmptyImList<Clause>();
-	}
-	else
-	{
-		for ( Clause tempcl: templist)
-		{
-			retcllist=retcllist.add(tempcl);
-		}
-		// átmásolni és visszatérni
-		//System.out.println("Substitue return:"+templist);
-		return retcllist;
-	}
-
-}
-
+	
 }
