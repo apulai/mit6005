@@ -32,7 +32,7 @@ public class FormulaTest {
 
 
 	// TODO: put your test cases here
-	@Test
+	//@Test
 	public void t0empty()
 	{
 		Formula f;
@@ -42,7 +42,7 @@ public class FormulaTest {
 		assertTrue(Boolean.TRUE);
 	}
 
-	@Test
+	//@Test
 	public void t1single()
 	{
 		Formula f;
@@ -54,7 +54,7 @@ public class FormulaTest {
 		assertTrue(Boolean.TRUE);
 	}   
 
-	@Test
+	//@Test
 	public void t2normal()
 	{
 		Formula f1,f2,f3;
@@ -76,7 +76,7 @@ public class FormulaTest {
 	}   
 
 
-	@Test
+	//@Test
 	public void t3normal()
 	{
 		Formula f1,f2,f3;
@@ -100,7 +100,7 @@ public class FormulaTest {
 		assertTrue(Boolean.TRUE);
 	}
 
-	@Test
+	//@Test
 	public void t4normal()
 	{
 		Formula f1,f2,f3;
@@ -163,7 +163,7 @@ public class FormulaTest {
 
 		f3=f1.or(f2);
 		System.out.println("---");
-		System.out.println("OR6 test:");
+		System.out.println("OR6 test: (a,b) or (c,d) ");
 		System.out.println("Constructed formula:"+f3.toString());
 		System.out.println("Size is: "+f3.getSize());
 		System.out.println("list of caluses:"+f3.getClauses().toString());
@@ -182,14 +182,15 @@ public class FormulaTest {
 		clause3 = make (na,nb);
 
 		f1=new Formula(clause1);
-		f2=new Formula(clause2);
-
+		
 		f2=new Formula(clause3).addClause(clause2);
 		//System.out.println(f1.toString());
 
 		f3=f1.or(f2);
 		System.out.println("---");
-		System.out.println("OR7 test:");
+		System.out.println("OR7 test: (a,b) or ( (c,d) and (na,nb))");
+		System.out.println("Constructed formula:"+f2.toString());
+		
 		System.out.println("Constructed formula:"+f3.toString());
 		System.out.println("Size is: "+f3.getSize());
 		System.out.println("list of caluses:"+f3.getClauses().toString());
@@ -220,7 +221,7 @@ public class FormulaTest {
 		//System.out.println(f1.toString());
 
 		System.out.println("---");
-		System.out.println("T8:");
+		System.out.println("T8: (a and b) or (c and d)");
 		System.out.println("Constructed formula:"+f5.toString());
 		System.out.println("Size is: "+f5.getSize());
 		System.out.println("list of caluses:"+f5.getClauses().toString());
@@ -233,7 +234,7 @@ public class FormulaTest {
 	{
 		//   to do (a & b) .or (c & d),
 		//   you'll need to make (a | d) & (a | c) & (b | c) & (b | d)
-		Formula f1,f2,f3,f4,f5;
+		Formula f1,f2,f3,f4,f5,f6;
 		Variable v1,v2;
 		Clause clause1,clause2,clause3, clause4;
 		clause1 = make (a);
@@ -246,13 +247,16 @@ public class FormulaTest {
 		f3=new Formula(clause3);
 		f4=new Formula(clause4);
 
-		//f5=(f1.and(f2)).or(f3.and(f4));
-		f5=f1.not(f1);
+		f5=(f1.and(f2)).or(f3.and(f4));
+		f6=f5.not(f5);
 		//System.out.println(f1.toString());
 
 		System.out.println("---");
-		System.out.println("T9not:");
+		
+		System.out.println("T9not: not( ( a and b ) or (c and d)) ");
 		System.out.println("Constructed formula:"+f5.toString());
+		System.out.println("Constructed nEGATED formula:"+f6.toString());
+		
 		System.out.println("Size is: "+f5.getSize());
 		System.out.println("list of caluses:"+f5.getClauses().toString());
 
@@ -280,7 +284,7 @@ public class FormulaTest {
 		//System.out.println(f1.toString());
 
 		System.out.println("---");
-		System.out.println("T10not:");
+		System.out.println("T10not: !((a | b) & c) ");
 		System.out.println("Constructed formula:"+f5.toString());
 		System.out.println("Size is: "+f5.getSize());
 		System.out.println("list of caluses:"+f5.getClauses().toString());

@@ -31,8 +31,7 @@ import sat.env.Variable;
 public class Formula {
 	private final ImList<Clause> clauses;
 
-	public enum myoperations { OR, AND, NOT, IMPLIES, XOR, FURA }
-
+	
 	// Rep invariant:
 	//      clauses != null
 	//      clauses contains no null elements (ensured by spec of ImList)
@@ -157,7 +156,7 @@ public class Formula {
 		{
 			f2=new Formula(c1, f2.clauses );
 		}
-		System.out.println("Formula AND returning: "+f2);
+		//System.out.println("Formula AND returning: "+f2);
 		return f2;
 	}
 
@@ -182,7 +181,7 @@ public class Formula {
 
 		Clause tempcl;
 		Formula retform;
-		int debug=1;
+		int debug=0;
 
 		if( debug == 1) System.out.println("Formula OR start:"+this.toString()+" OR "+p.toString());
 
@@ -196,7 +195,7 @@ public class Formula {
 					if( c2.size() != 0 )
 					{
 						tempcl=c1.merge(c2);
-						if( tempcl != null  )
+						if( tempcl != null && !retform.isListed(tempcl) )
 							retform=retform.addClause(tempcl);	
 					}			
 				}  				
@@ -221,12 +220,12 @@ public class Formula {
 		//throw new RuntimeException("not yet implemented.");
 		Clause tempcl;
 		Formula retform,f1;
-		int debug=1;
+		int debug=0;
 
 		if( debug == 1) System.out.println("Formula NOT start:"+this.toString());
 
 		retform=new Formula();
-		for( Clause c1: this.getClauses())
+		for( Clause c1: p.getClauses())
 		{	
 			f1=new Formula();
 			if( c1.size()!=0 )
@@ -236,8 +235,8 @@ public class Formula {
 				{
 					tempcl=new Clause( l1.getNegation());
 					if( debug == 1) System.out.println("Formula NOT tempcl:"+tempcl.toString());
-
-					f1=f1.and(new Formula(tempcl));
+					if( f1.getSize() == 0) f1=new Formula(tempcl);
+					else f1=f1.and(new Formula(tempcl));
 					if( debug == 1) System.out.println("Formula NOT f1:"+f1.toString());
 
 				}
@@ -250,7 +249,7 @@ public class Formula {
 			{
 				retform=retform.or(f1);
 			}
-			if( debug == 1) System.out.println("Formula NOT retform:"+retform.toString());
+			if( debug == 1) System.out.println("Formula NOT before next cl:"+retform.toString());
 
 		}
 
@@ -261,6 +260,15 @@ public class Formula {
 
 	}
 
+	public Boolean isListed(Clause cl)
+	{
+		if( this.getSize() == 0) return Boolean.FALSE;
+		for(Clause tempcl: this.getClauses())
+		{
+			if( cl.equals(tempcl)) return Boolean.TRUE;
+		}
+		return Boolean.FALSE;
+	}
 	/**
 	 * 
 	 * @return number of clauses in this
