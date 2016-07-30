@@ -72,7 +72,7 @@ public class SATSolver {
 
 		if( clauses.size() == 0 )
 		{
-			//if( debug > 0) 
+			if( debug > 0) 
 			System.out.println("solve No clauses: trivially TURE: "+env);
 			return env;
 		}
@@ -86,8 +86,10 @@ public class SATSolver {
 			//if( cl.size() == 0)
 			if( cl.isEmpty() )
 			{
-				//if( debug > 0) 
-				System.out.println("solve empty clause: FALSE: "+env);
+				if( debug > 0) 
+				System.out.println("solve empty clause: FALSE: ");
+				if( debug > 1)
+					System.out.println("solve empty clause: FALSE: "+env);
 				return null;
 			}      	
 		}

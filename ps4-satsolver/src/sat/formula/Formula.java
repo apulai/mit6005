@@ -285,8 +285,8 @@ public class Formula {
 	public String toString() {
 		String result = "Problem[";
 		for (Clause c : clauses)
-			result += "\n" + c;
-		return result + "]";
+			result += "  " + c;
+		return result + "]\n";
 	}
 
 

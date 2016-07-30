@@ -15,14 +15,27 @@ public class Main {
      */
     public static void main (String[] args) throws IOException, ParseException {
 //        timedSolve (new Sudoku(2));
-//        timedSolve (new Sudoku(2, new int[][] { 
-//                    new int[] { 0, 1, 3, 4 }, 
-//                    new int[] { 0, 0, 0, 0 }, 
-//                    new int[] { 2, 0, 3, 0 }, 
-//                    new int[] { 0, 0, 0, 0 }, 
-//        }));
-//        timedSolveFromFile(3, "samples/sudoku_easy.txt");
-//        timedSolveFromFile(3, "samples/sudoku_hard.txt");        
+    	
+       timedSolveFromFile(2, "samples/sudoku_4x4.txt");
+       System.out.println("-----");
+       timedSolve (new Sudoku(2, new int[][] { 
+                    new int[] { 0, 3, 2, 0 }, 
+                    new int[] { 2, 4, 1, 3 }, 
+                    new int[] { 3, 1, 4, 2 }, 
+                    new int[] { 4, 0, 0, 0 }, 
+        }));
+       System.out.println("-----");
+       timedSolve (new Sudoku(2, new int[][] { 
+           new int[] { 0, 3, 2, 0 }, 
+           new int[] { 2, 0, 1, 3 }, 
+           new int[] { 3, 1, 4, 2 }, 
+           new int[] { 4, 0, 0, 0 }, 
+       }));
+       System.out.println("-----");
+      timedSolveFromFile(3, "samples/sudoku_easy.txt");
+      
+      System.out.println("-----");
+      timedSolveFromFile(3, "samples/sudoku_hard.txt");        
     }
 
     /**
@@ -35,13 +48,15 @@ public class Main {
         System.out.println ("Creating SAT formula...");
         Formula f = sudoku.getProblem();
         
-        System.out.println ("Solving...");
+        System.out.println ("Solving problem size: "+f.getSize());
+        System.out.println ("Solving..."+f.toString());
         Environment e = SATSolver.solve(f);
         
         System.out.println ("Interpreting solution...");
         Sudoku solution = sudoku.interpretSolution(e);
         
-        System.out.println ("Solution is: \n" + solution);    
+        System.out.println ("Solution is: \n");
+        System.out.println (solution);    
 
         long time = System.nanoTime();
         long timeTaken = (time - started);
